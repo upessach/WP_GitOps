@@ -7,6 +7,12 @@ resource "docker_container" "wordpress" {
     internal = 80
     external = 10000
   }
+  env = [
+    "WORDPRESS_DB_HOST=db",
+    "WORDPRESS_DB_USER=mysqluser",
+    "WORDPRESS_DB_PASSWORD=12345678",
+    "WORDPRESS_DB_NAME=mysqldb"
+  ]
 }
 
 resource "docker_container" "db" {
