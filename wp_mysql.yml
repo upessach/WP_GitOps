@@ -1,0 +1,18 @@
+version: '3.1'
+services:
+  wordpress:
+    image: wordpress
+    ports:
+      - "10000:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: 12345678
+      WORDPRESS_DB_NAME: wpdb
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: mysqldb
+      MYSQL_USER: mysqluser
+      MYSQL_PASSWORD: 12345678
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
