@@ -1,29 +1,69 @@
 provider "docker" {}
 
-resource "docker_container" "wordpress" {
+# Create a docker network for communication between containers
+resource "docker_network" "wordpress_net" {
+  name = "wordpress_net"
+}
+
+# MySQL container for the WordPress instances
+resource "docker_container" "mysql" {
+  image = "mysql:5.7"
+  name  = "mysql"
+  networks_advanced {
+    name = docker_network.wordpress_net.name
+  }
+  env = [
+    "MYSQL_ROOT_PASSWORD=root_pass",
+    "MYSQL_DATABASE=wordpress",
+    "MYSQL_USER=wpuser",
+    "MYSQL_PASSWORD=wppass"
+  ]
+}
+
+# WordPress instance 1
+resource "docker_container" "wordpress_1" {
   image = "wordpress:latest"
-  name  = "wordpress"
+  name  = "wordpress_1"
+  networks_advanced {
+    name = docker_network.wordpress_net.name
+  }
+  env = [
+    "WORDPRESS_DB_HOST=mysql",
+    "WORDPRESS_DB_USER=wpuser",
+    "WORDPRESS_DB_PASSWORD=wppass",
+    "WORDPRESS_DB_NAME=wordpress"
+  ]
+}
+
+# WordPress instance 2
+resource "docker_container" "wordpress_2" {
+  image = "wordpress:latest"
+  name  = "wordpress_2"
+  networks_advanced {
+    name = docker_network.wordpress_net.name
+  }
+  env = [
+    "WORDPRESS_DB_HOST=mysql",
+    "WORDPRESS_DB_USER=wpuser",
+    "WORDPRESS_DB_PASSWORD=wppass",
+    "WORDPRESS_DB_NAME=wordpress"
+  ]
+}
+
+# Nginx load balancer
+resource "docker_container" "nginx_lb" {
+  image = "nginx:latest"
+  name  = "nginx_lb"
+  networks_advanced {
+    name = docker_network.wordpress_net.name
+  }
   ports {
     internal = 80
     external = 10000
   }
-  env = [
-    "WORDPRESS_DB_HOST=db",
-    "WORDPRESS_DB_USER=mysqluser",
-    "WORDPRESS_DB_PASSWORD=12345678",
-    "WORDPRESS_DB_NAME=mysqldb"
-  ]
+  volumes {
+    container_path  = "/etc/nginx/conf.d/default.conf"
+    host_path      = "${path.module}/nginx.conf"
+    read_only      = true
+  }
 }
-
-resource "docker_container" "db" {
-  image = "mysql:5.7"
-  name  = "db"
-  env   = [
-    "MYSQL_RANDOM_ROOT_PASSWORD=1",
-    "MYSQL_DATABASE=mysqldb",
-    "MYSQL_USER=mysqluser",
-    "MYSQL_PASSWORD=12345678"
-  ]
-}
-
-// More configurations according to your requirements
