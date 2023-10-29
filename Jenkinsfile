@@ -9,20 +9,15 @@ pipeline {
             }
         }
 
-        stage('Initialize Terraform') {
+        stage('Initialize and Apply Terraform') {
             steps {
                 script {
-                    // Initialize Terraform
-                    sh 'terraform init'
-                }
-            }
-        }
-
-        stage('Apply Terraform') {
-            steps {
-                script {
-                    // Apply Terraform configuration
-                    sh 'terraform apply -auto-approve'
+                    // Change to the Terraform directory
+                    dir('terraform') {
+                        // Initialize and Apply Terraform configuration
+                        sh 'terraform init'
+                        sh 'terraform apply -auto-approve'
+                    }
                 }
             }
         }
@@ -30,8 +25,8 @@ pipeline {
         stage('Verification') {
             steps {
                 script {
-                    // Add commands to verify your setup here
-                    // For example, a simple cURL request to the Nginx server
+                    // Assuming the Nginx server is accessible on localhost:10000
+                    // This might need to change based on your networking setup
                     sh 'curl http://localhost:10000'
                 }
             }
@@ -40,8 +35,11 @@ pipeline {
         stage('Cleanup') {
             steps {
                 script {
-                    // Optional: Remove Terraform-managed infrastructure
-                    sh 'terraform destroy -auto-approve'
+                    // Change to the Terraform directory
+                    dir('terraform') {
+                        // Destroy Terraform-managed infrastructure
+                        sh 'terraform destroy -auto-approve'
+                    }
                 }
             }
         }
