@@ -1,28 +1,51 @@
 pipeline {
-    // ... other stages ...
+    agent any
 
-    stage('Verification') {
-        steps {
-            script {
-                // Add commands to verify your setup here
-                sh 'curl http://localhost:10000'
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
             }
         }
-    }
 
-    // Comment out or remove the cleanup stage to keep the infrastructure running
-    // stage('Cleanup') {
-    //     steps {
-    //         script {
-    //             sh 'terraform destroy -auto-approve'
-    //         }
-    //     }
-    // }
+        stage('Initialize Terraform') {
+            steps {
+                script {
+                    sh 'cd terraform && terraform init'
+                }
+            }
+        }
+
+        stage('Apply Terraform') {
+            steps {
+                script {
+                    sh 'cd terraform && terraform apply -auto-approve'
+                }
+            }
+        }
+
+        stage('Verification') {
+            steps {
+                script {
+                    sh 'curl http://localhost:10000'
+                }
+            }
+        }
+
+        // Comment out or remove the cleanup stage to keep the infrastructure running
+        // stage('Cleanup') {
+        //     steps {
+        //         script {
+        //             sh 'cd terraform && terraform destroy -auto-approve'
+        //         }
+        //     }
+        // }
+    }
 
     post {
         always {
+            echo 'Build Completed'
             // Add any post-build actions here
         }
     }
 }
-z
