@@ -2,7 +2,12 @@
 
 # Specify the Terraform version
 terraform {
-  required_version = ">= 0.12"
+  required_providers {
+    docker = {
+      source = "kreuzwerker/docker"
+      version = "2.15.0"  # You can specify a version here
+    }
+  }
 }
 
 # Configure the Docker provider
