@@ -20,10 +20,11 @@ resource "docker_image" "nginx" {
 
 # Run a Docker container using the pulled image
 resource "docker_container" "nginx" {
-  image = docker_image.nginx.id
+  image = "nginx:latest"
   name  = "nginx_test"
   ports {
     internal = 80
-    external = 10000  # Change this to a non-conflicting port
+    external = 10000
   }
 }
+
