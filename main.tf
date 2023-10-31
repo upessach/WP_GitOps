@@ -75,7 +75,7 @@ resource "docker_container" "nginx_lb" {
   }
   volumes {
     container_path  = "/etc/nginx/conf.d/default.conf"
-    host_path      = "${path.module}/nginx.conf"
+    host_path      = "${abspath(path.module)}/nginx.conf"  # Updated to ensure absolute path
     read_only      = true
   }
 }
