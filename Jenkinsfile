@@ -4,33 +4,45 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Checks out the repository
                 checkout scm
             }
         }
-        stage('Cleanup Docker') {
+
+        stage('Terraform Init') {
             steps {
-                script {
-                    sh 'docker stop nginx_test || true'
-                    sh 'docker rm nginx_test || true'
-                    sh 'docker rmi nginx:latest --force || true'
-                }
+                // Initialize Terraform
+                sh 'terraform init'
             }
         }
-        stage('Terraform Destroy') {
+
+        stage('Terraform Plan') {
             steps {
-                script {
-                    dir('terraform') {
-                        sh 'terraform init'
-                        sh 'terraform destroy -auto-approve'
-                    }
-                }
+                // Output the plan for logging purposes
+                sh 'terraform plan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                // Apply the Terraform plan
+                sh 'terraform apply -auto-approve'
             }
         }
     }
 
     post {
         always {
-            echo 'Build Completed'
+            // Add steps to clean up or send notifications here
+            echo 'Build finished.'
+        }
+        success {
+            // Actions to perform on success
+            echo 'Deployment successful!'
+        }
+        failure {
+            // Actions to perform if the build fails
+            echo 'Deployment failed.'
         }
     }
 }
