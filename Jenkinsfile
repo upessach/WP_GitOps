@@ -7,6 +7,15 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Cleanup Docker') {
+            steps {
+                script {
+                    sh 'docker stop nginx_test || true'
+                    sh 'docker rm nginx_test || true'
+                    sh 'docker rmi nginx:latest || true'
+                }
+            }
+        }
         stage('Terraform Destroy') {
             steps {
                 script {
