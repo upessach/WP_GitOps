@@ -12,7 +12,7 @@ pipeline {
                 script {
                     sh 'docker stop nginx_test || true'
                     sh 'docker rm nginx_test || true'
-                    sh 'docker rmi nginx:latest || true'
+                    sh 'docker rmi nginx:latest --force || true'
                 }
             }
         }
