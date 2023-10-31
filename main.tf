@@ -1,4 +1,16 @@
-provider "docker" {}
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 2.13"  # Use the appropriate version
+    }
+  }
+}
+
+provider "docker" {
+  # Provider configuration if necessary
+}
+
 
 # Create a docker network for communication between containers
 resource "docker_network" "wordpress_net" {
