@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     stages {
         stage('Checkout') {
             steps {
@@ -16,17 +17,8 @@ pipeline {
                 }
             }
         }
-        stage('Terraform Apply') {
-            steps {
-                script {
-                    dir('terraform') {
-                        sh 'terraform init'
-                        sh 'terraform apply -auto-approve'
-                    }
-                }
-            }
-        }
     }
+
     post {
         always {
             echo 'Build Completed'
