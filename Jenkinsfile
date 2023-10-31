@@ -21,7 +21,7 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 // Output the plan for logging purposes
-                sh 'terraform plan'
+                sh   'terraform validate && terraform plan'
             }
         }
 
