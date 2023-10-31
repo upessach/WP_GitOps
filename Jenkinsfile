@@ -1,5 +1,7 @@
 pipeline {
     agent any
+    environment {
+        TF_LOG = 'DEBUG'
 
     stages {
         stage('Checkout') {
