@@ -78,4 +78,10 @@ resource "docker_container" "nginx_lb" {
     host_path      = "${abspath(path.module)}/nginx.conf"  # Updated to ensure absolute path
     read_only      = true
   }
+  
+  depends_on = [
+    docker_container.mysql,
+    docker_container.wordpress_1,
+    docker_container.wordpress_2
+  ]
 }
